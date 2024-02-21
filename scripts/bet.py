@@ -3,7 +3,7 @@ class SmartContract():
         self.ownerPublicKey=ownerPublicKey
         self.description=None
         self.startTime=None
-        self.closingPeriod=None
+        self.closingPeriod= 0
         #dictionnary of betters with their public key, the amount staked, and the outcome they want
         self.betters=[]
         #list of strings for different outcomes
@@ -32,7 +32,7 @@ class SmartContract():
             print(l)
 #___________________________________________________________________________
             
-    def startBet(self,callerPublicKey,callTimestamp,closingPeriod,description,outcomes):
+    def startBet(self, callerPublicKey,callTimestamp, closingPeriod,description,outcomes):
         if(callerPublicKey != self.ownerPublicKey):
             self.logs.append(f"[ERROR] {callerPublicKey[256:264]} tried modifying contract but is not owner.")
             return
@@ -49,7 +49,7 @@ class SmartContract():
         self.logs.append(f'[BET] Started new bet.')
 
     
-    def closeBet(self,callerPublicKey,callTimestamp,outcome):
+    def closeBet(self, callerPublicKey, callTimestamp,outcome):
         if callerPublicKey!=self.ownerPublicKey:
             self.logs.append(f"[ERROR] {callerPublicKey[256:264]}")
         self.closingPeriod=-1
@@ -58,7 +58,7 @@ class SmartContract():
         self.logs.append(f'[BET] Redistribed winnings.')
 
 
-    def redistributePebbles(self,winningOutcome):
+    def redistributePebbles(self, winningOutcome):
         if winningOutcome < 1 or winningOutcome>len(self.outcomes):
             self.logs.append(["[ERROR] outcome not in list of possible outcomes."])
             return
@@ -71,13 +71,17 @@ class SmartContract():
                 rest+=b['Amount']
         multiplier=rest/winningstaked
         for b in self.betters:
+            b['Account'].addPebble(b['Amount'] + b['Amount']*multiplier)
             pass
     
 
-    def addBetter(self,betterPublicKey,callTimestamp,amount,outcome):
-        #TODO, check if better has money to stake
+    def addBetter(self,betterPublicKey,callTimestamp,betterAccount,amount,outcome):
+        betterPublicKey = betterAccount.issuerPublicKey
         if amount<0:
             self.logs.append(f'[ERROR] cannot stake negative amount.')
+        if betterAccount.pebbleAmount<amount:
+            self.logs.append(f'[ERROR] {betterPublicKey[256:264]} does not have enough pebbles.')
+            return
         if callTimestamp>self.closingPeriod:
             self.logs.append(f"[ERROR] {betterPublicKey[256:264]} tried betting after closing period.")
             return
@@ -87,8 +91,12 @@ class SmartContract():
                 return
             elif b['PublicKey']==betterPublicKey and b['Outcome']==self.outcomes[outcome-1]:
                 b['Amount']+=amount
+                betterAccount.removePebble(amount)
+                print(betterAccount.pebbleAmount)
                 self.logs.append(f'[BET] {betterPublicKey[256:264]} added more to his bet.')
                 return
-        self.betters.append({'PublicKey':betterPublicKey,'Amount':amount,'Outcome':self.outcomes[outcome-1]})
+        self.betters.append({'PublicKey':betterPublicKey, 'Account': betterAccount,'Amount':amount,'Outcome':self.outcomes[outcome-1]})
+        betterAccount.removePebble(amount)
+        print(betterAccount.pebbleAmount)
         self.logs.append(f"[BET] Added better {betterPublicKey[256:264]}.")
         return

@@ -53,7 +53,7 @@ class SmartContractWritingOperation(Certificate):
         payload['Timestamp']=self.timestamp
         payload['targetFunctionName']=self.targetFunctionName
         payload['targetContractHash']=self.targetSmartContractHash
-        payload['functionArgumentList']=self.functionArgumentList
+        #payload['functionArgumentList']=dumps(self.functionArgumentList)
         return payload
     
     def hash(self):
@@ -63,5 +63,6 @@ class SmartContractWritingOperation(Certificate):
     def apply_on_contract(self,contractPythonObject):
         args=self.functionArgumentList[:]
         args.insert(0,self.timestamp)
+        print(f'_----------------{self.timestamp}')
         args.insert(0,self.issuerPublicKey)
         getattr(contractPythonObject,self.targetFunctionName)(*args)

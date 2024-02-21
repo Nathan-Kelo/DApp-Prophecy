@@ -1,10 +1,8 @@
-class SmartContract():
+class Account():
     def __init__(self,issuerPublicKey):
         self.pebbleAmount=20
-        self.type="ACCOUNT"
         self.issuerPublicKey=issuerPublicKey
         self.logs=[]
-
 
     def log(self,message):
         self.logs.append(f'[ACC {self.issuerPublicKey[256:264]}] {message}')
@@ -13,10 +11,10 @@ class SmartContract():
         for l in self.logs:
             print(l)
 
-    def removePebble(self,issuerPublicKey,callTimestamp,amount):
+    def removePebble(self,amount):
         self.pebbleAmount-=amount
         self.log(f"REMOVED {amount} | NEW BALANCE:{self.pebbleAmount}")
     
-    def addPebble(self,issuerPublickey,callTimestamp,amount):
+    def addPebble(self,amount):
         self.pebbleAmount+=amount
         self.log(f"ADDED {amount} | NEW BALANCE:{self.pebbleAmount}")
