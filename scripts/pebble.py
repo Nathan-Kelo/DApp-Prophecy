@@ -1,6 +1,22 @@
-from certificate import Certificate
-
-class Account(Certificate):
+class SmartContract():
     def __init__(self,issuerPublicKey):
-        super().__init__(issuerPublicKey)
         self.pebbleAmount=20
+        self.type="ACCOUNT"
+        self.issuerPublicKey=issuerPublicKey
+        self.logs=[]
+
+
+    def log(self,message):
+        self.logs.append(f'[ACC {self.issuerPublicKey[256:264]}] {message}')
+
+    def logDump(self):
+        for l in self.logs:
+            print(l)
+
+    def removePebble(self,issuerPublicKey,callTimestamp,amount):
+        self.pebbleAmount-=amount
+        self.log(f"REMOVED {amount} | NEW BALANCE:{self.pebbleAmount}")
+    
+    def addPebble(self,issuerPublickey,callTimestamp,amount):
+        self.pebbleAmount+=amount
+        self.log(f"ADDED {amount} | NEW BALANCE:{self.pebbleAmount}")
