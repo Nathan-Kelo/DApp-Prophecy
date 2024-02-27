@@ -3,7 +3,7 @@ class SmartContract():
         self.ownerPublicKey=ownerPublicKey
         self.description=None
         self.startTime=None
-        self.closingPeriod= 0
+        self.closingPeriod=None
         #dictionnary of betters with their public key, the amount staked, and the outcome they want
         self.betters=[]
         #list of strings for different outcomes
@@ -44,9 +44,11 @@ class SmartContract():
             return
         self.closingPeriod=closingPeriod
         self.description=description
+
         self.outcomes=outcomes
         self.startTime=callTimestamp
         self.logs.append(f'[BET] Started new bet.')
+        print('-------------sfsfs----------------------------',closingPeriod)
 
     
     def closeBet(self, callerPublicKey, callTimestamp,outcome):
@@ -55,7 +57,7 @@ class SmartContract():
         self.closingPeriod=-1
         self.logs.append(f'[BET] Redistributing winnings...')
         self.redistributePebbles(outcome)
-        self.logs.append(f'[BET] Redistribed winnings.')
+        self.logs.append(f'[BET] Redistributed winnings.')
 
 
     def redistributePebbles(self, winningOutcome):
