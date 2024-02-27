@@ -1,6 +1,6 @@
 from certificate import Certificate
 from json import dumps
-from helpers import cryptography
+from helpers import cryptography, timestamp
 
 class SmartContractDefinition(Certificate):
 
@@ -11,9 +11,16 @@ class SmartContractDefinition(Certificate):
     def build_payload(self):
         payload={}
         payload['SourceCode']=self.sourceCode
-        payload['Timestamp']=self.timestamp
+        payload['Timestamp']=timestamp.now()
         payload['issuerPublicKey']=self.issuerPublicKey
         return payload
+    
+    def hash(self):
+        tmp=""
+        for item in self.build_payload():
+            tmp+=str(item)
+        tmp+=str(self.timestamp)
+        return cryptography.hash_string(tmp)
     
     def instantiate_contract(self):
         exec(self.sourceCode)
@@ -44,8 +51,8 @@ class SmartContractDefinition(Certificate):
     
         for block in blockchain.blockList:
             for cert in block.certificateList:
-                if isinstance(cert, SmartContractWritingOperation):
-                    contract = SmartContractDefinition.get_smart_contract_at_current_state(blockchain, cert.targetSmartContractHash)
+                if isinstance(cert, SmartContractDefinition):
+                    contract = SmartContractDefinition.get_smart_contract_at_current_state(blockchain, cert.hash())
                 
                     if contract.type == "BET":
                         total_mises = sum(bet['Amount'] for bet in contract.betters)

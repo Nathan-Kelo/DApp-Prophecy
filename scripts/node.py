@@ -60,13 +60,13 @@ class BlockchainNode(Node):
     def new_certificate(self,certificate):
         
         if not certificate.is_legit():
-            self.print(1)
+            self.print("..................1")
             return False
         if self.blockchain.contains_certificate(certificate):
-            self.print(2)
+            self.print("..................2")
             return False
         if certificate in self.__certificateBox:
-            self.print('3 :')
+            self.print('.......................3')
             certificate.display()
             return False
         

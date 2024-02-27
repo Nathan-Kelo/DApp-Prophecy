@@ -8,7 +8,7 @@ class Certificate:
 
     def __init__(self,issuerPublicKey):
         self.issuerPublicKey=issuerPublicKey
-        self.signature=None        
+        self.signature=None
         self.timestamp=timestamp.now()
 
     def build_payload(self):
