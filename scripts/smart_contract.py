@@ -63,6 +63,5 @@ class SmartContractWritingOperation(Certificate):
     def apply_on_contract(self,contractPythonObject):
         args=self.functionArgumentList[:]
         args.insert(0,self.timestamp)
-        print(f'_----------------{self.timestamp}')
         args.insert(0,self.issuerPublicKey)
         getattr(contractPythonObject,self.targetFunctionName)(*args)

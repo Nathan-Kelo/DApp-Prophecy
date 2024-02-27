@@ -73,8 +73,9 @@ class SmartContract():
                 rest+=b['Amount']
         multiplier=rest/winningstaked
         for b in self.betters:
-            b['Account'].addPebble(b['Amount'] + b['Amount']*multiplier)
-            pass
+            if b['Outcome']==self.outcomes[winningOutcome-1]:
+                b['Account'].addPebble(b['Amount']+b['Amount']*multiplier)
+            
     
 
     def addBetter(self,betterPublicKey,callTimestamp,betterAccount,amount,outcome):
@@ -94,11 +95,9 @@ class SmartContract():
             elif b['PublicKey']==betterPublicKey and b['Outcome']==self.outcomes[outcome-1]:
                 b['Amount']+=amount
                 betterAccount.removePebble(amount)
-                print(betterAccount.pebbleAmount)
                 self.logs.append(f'[BET] {betterPublicKey[256:264]} added more to his bet.')
                 return
         self.betters.append({'PublicKey':betterPublicKey, 'Account': betterAccount,'Amount':amount,'Outcome':self.outcomes[outcome-1]})
         betterAccount.removePebble(amount)
-        print(betterAccount.pebbleAmount)
         self.logs.append(f"[BET] Added better {betterPublicKey[256:264]}.")
         return
