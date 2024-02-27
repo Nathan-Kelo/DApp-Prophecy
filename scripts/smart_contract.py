@@ -11,7 +11,7 @@ class SmartContractDefinition(Certificate):
     def build_payload(self):
         payload={}
         payload['SourceCode']=self.sourceCode
-        payload['Timestamp']=timestamp.now()
+        payload['Timestamp']=self.timestamp
         payload['issuerPublicKey']=self.issuerPublicKey
         return payload
     
