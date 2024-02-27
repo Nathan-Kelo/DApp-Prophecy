@@ -37,6 +37,25 @@ class SmartContractDefinition(Certificate):
             c.apply_on_contract(contract)
         return contract
 
+    @staticmethod
+    def find_trending_bets(blockchain):
+        bet_totals = []
+        encountered_contracts = set()
+    
+        for block in blockchain.blockList:
+            for cert in block.certificateList:
+                if isinstance(cert, SmartContractWritingOperation):
+                    contract = SmartContractDefinition.get_smart_contract_at_current_state(blockchain, cert.targetSmartContractHash)
+                
+                    if contract.type == "BET":
+                        total_mises = sum(bet['Amount'] for bet in contract.betters)
+                    
+                        if contract.description not in encountered_contracts:
+                            bet_totals.append({'contract_Owner': contract.ownerPublicKey[256:264] ,'contract_desc': contract.description, 'total_mises': total_mises})
+                            encountered_contracts.add(contract.description)
+
+        bet_totals = sorted(bet_totals, key=lambda x: x['total_mises'], reverse=True)
+        return bet_totals
 
     
 class SmartContractWritingOperation(Certificate):
@@ -65,3 +84,5 @@ class SmartContractWritingOperation(Certificate):
         args.insert(0,self.timestamp)
         args.insert(0,self.issuerPublicKey)
         getattr(contractPythonObject,self.targetFunctionName)(*args)
+
+    
