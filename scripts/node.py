@@ -14,6 +14,7 @@ class BlockchainNode(Node):
         self.consensusAlgorithm=consensusAlgorithm
         self.blockchain=Blockchain()
         self.__certificateBox=set()
+        self.quiet=True
         
 #____________________________________communication protocol____________________________________
         
@@ -28,7 +29,8 @@ class BlockchainNode(Node):
             self.print(f'I dont know what I received.')
 
     def print(self,message):
-        print(f'[{self.formatIdentifier(self.nodeIdentifier)}] {message}')
+        if not self.quiet:
+            print(f'[{self.formatIdentifier(self.nodeIdentifier)}] {message}')
 
     def send_object_to_node(self, obj, nodeIdentifier):
         self.print(f"I am sending the data \"{obj}\" to \"{self.formatIdentifier(nodeIdentifier)}\"")
@@ -67,11 +69,13 @@ class BlockchainNode(Node):
             return False
         if certificate in self.__certificateBox:
             self.print('3 :')
-            certificate.display()
+            if not self.quiet:
+                certificate.display()
             return False
         
         self.print('Adding')
-        certificate.display()
+        if not self.quiet:
+            certificate.display()
         self.__certificateBox.add(certificate)
         if not self.try_forge_block():
             self.broadcast_object(certificate)

@@ -31,7 +31,6 @@ class SmartContractDefinition(Certificate):
                     if c.targetSmartContractHash==targetSmartContractHash:
                         history.append(c)
         history=sorted(history,key=lambda x:x.timestamp)
-        print(history)
         contract=history[0].instantiate_contract()
         for c in history[1:]:
             c.apply_on_contract(contract)
