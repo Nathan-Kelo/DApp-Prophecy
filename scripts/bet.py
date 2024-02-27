@@ -44,11 +44,9 @@ class SmartContract():
             return
         self.closingPeriod=closingPeriod
         self.description=description
-
         self.outcomes=outcomes
         self.startTime=callTimestamp
-        self.logs.append(f'[BET] Started new bet by {callerPublicKey[256:264]}.')
-        print('-----------------------------------------')
+        self.logs.append(f'[BET] {callerPublicKey[256:264]} has started bet.')
 
     
     def closeBet(self, callerPublicKey, callTimestamp,outcome):
@@ -101,5 +99,3 @@ class SmartContract():
         betterAccount.removePebble(amount)
         self.logs.append(f"[BET] Added better {betterPublicKey[256:264]}.")
         return
-    
-    
